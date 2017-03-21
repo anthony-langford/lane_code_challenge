@@ -1,14 +1,34 @@
 {
   "name": "lane",
   "version": "1.0.0",
-  "description": "",
+  "description": "lane coding challenge geo-location weather data",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "./node_modules/.bin/nodemon"
   },
-  "author": "",
+  "author": {
+    "name": "Anthony Langford",
+    "email": "anthony.langford@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamtonybologna/lane_code_challenge"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "koa",
+    "koa2",
+    "babel"
+  ],
   "license": "ISC",
   "dependencies": {
-    "koa": "^2.2.0"
+    "babel-plugin-syntax-async-functions": "^6.8.0",
+    "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "babel-preset-es2015-node5": "^1.1.2",
+    "babel-preset-stage-0": "^6.3.13",
+    "babel-register": "^6.4.3",
+    "koa": "^2.2.0",
+    "nodemon": "^1.8.1"
   }
 }

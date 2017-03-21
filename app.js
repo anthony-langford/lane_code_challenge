@@ -1,6 +1,8 @@
 const Koa = require('koa');
 const app = new Koa();
 
+const PORT = process.env.PORT || 5000;
+
 // x-response-time
 
 app.use(async function (ctx, next) {
@@ -21,15 +23,12 @@ app.use(async function (ctx, next) {
 
 // response
 
-app.use(ctx => {
+app.use(async ctx => {
   const clientIP = ctx.request.ip;
   console.log(clientIP);
-  // ctx.body = 'Hello World';
   ctx.body = `Client IP: ${clientIP}`;
 });
 
-// app.use(ctx => {
-//   ctx.body = 'Hello World';
-// });
-
-app.listen(5000);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Listening to port: ${PORT}`);
+});
