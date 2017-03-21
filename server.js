@@ -22,7 +22,14 @@ app.use(async function (ctx, next) {
 // response
 
 app.use(ctx => {
-  ctx.body = 'Hello World';
+  const clientIP = ctx.request.ip;
+  console.log(clientIP);
+  // ctx.body = 'Hello World';
+  ctx.body = `Client IP: ${clientIP}`;
 });
+
+// app.use(ctx => {
+//   ctx.body = 'Hello World';
+// });
 
 app.listen(5000);
