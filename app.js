@@ -32,8 +32,8 @@ app.use(async (ctx, next) => {
   console.log('clientIP', clientIP);
   // get geolocation info from ip-api
   await new Promise((resolve, reject) => {
-    // request(`http://ip-api.com/json/`, (error, response, body) => { // for dev
-    request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {
+    request(`http://ip-api.com/json/`, (error, response, body) => {                       // for dev
+    // request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {         // for production
       if (error) {
         console.log('error:', error); // log the error if one occured
       } else {
