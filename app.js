@@ -32,18 +32,16 @@ app.use(async (ctx, next) => {
   console.log('clientIP', clientIP);
   // get geolocation data from ip-api
   await new Promise((resolve, reject) => {
-    request(`http://ip-api.com/json/`, (error, response, body) => {                       // for dev
-    // request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {         // for production
+    // request(`http://ip-api.com/json/`, (error, response, body) => {                       // for dev
+    request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {         // for production
       if (error) {
         console.log('error:', error);       // log the error if one occured
       } else {
         console.log('statusCode:', response && response.statusCode);      // log the response status code if a response was received
         console.log('body:', body);         // log body
         let geolocationData = JSON.parse(body);
-        console.log('lat,', geolocationData.lat, ' lon,', geolocationData.lon);
         ctx.request.lat = geolocationData.lat;
         ctx.request.lon = geolocationData.lon;
-        console.log(ctx.request.body);
         resolve();
       }
     });
@@ -55,12 +53,15 @@ app.use(async (ctx, next) => {
 app.use(async (ctx, next) => {
   // get weather data from openweathermap api
   await new Promise((resolve, reject) => {
-    request(`api.openweathermap.org/data/2.5/weather?lat=${ctx.request.lat}&lon=${ctx.request.lon}`, (error, response, body) => {
+    request(`http://api.openweathermap.org/data/2.5/weather?lat=${ctx.request.lat}&lon=${ctx.request.lon}&appid=${config.WEATHER_CONSUMER_KEY}`, (error, response, body) => {
       if (error) {
         console.log('error:', error);       // log the error if one occured
       } else {
         console.log('statusCode:', response && response.statusCode);      // log the response status code if a response was received
         console.log('body:', body);         // log body
+        let weatherData = JSON.parse(body);
+        ctx.request.weatherCode = weatherData.id;
+        ctx.request.temp = weatherData.main.temp;
         resolve();
       }
     });
@@ -72,7 +73,9 @@ app.use(async (ctx, next) => {
   await next();
   ctx.body = `
     Client IP: ${clientIP}
-    Client Coordinates: ${ctx.request.lat}, ${ctx.request.lon}`;
+    Client Coordinates: ${ctx.request.lat}, ${ctx.request.lon}
+    Temperature: ${Math.round(ctx.request.temp - 273.15)}°C
+    Weather Code: ${ctx.request.weatherCode}`;
 });
 
 app.listen(PORT, '0.0.0.0', () => {
