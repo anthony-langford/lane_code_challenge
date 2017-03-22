@@ -35,7 +35,6 @@ app.use(async (ctx, next) => {
         console.log('statusCode:', response && response.statusCode); // log the response status code if a response was received
         console.log('body:', body); // log body
         let geolocationData = JSON.parse(body);
-        console.log('lat,', geolocationData.lat, ' lon,', geolocationData.lon);
         lat = geolocationData.lat;
         lon = geolocationData.lon;
         resolve();
