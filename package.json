@@ -4,7 +4,8 @@
   "description": "lane coding challenge geo-location weather data",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon"
+    "dev": "./node_modules/.bin/nodemon",
+    "start": "nodemon app.js"
   },
   "author": {
     "name": "Anthony Langford",
@@ -29,6 +30,8 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-register": "^6.4.3",
     "koa": "^2.2.0",
-    "nodemon": "^1.8.1"
+    "koa-request": "^1.0.0",
+    "nodemon": "^1.8.1",
+    "request": "^2.81.0"
   }
 }

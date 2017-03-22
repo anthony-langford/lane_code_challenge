@@ -1,11 +1,15 @@
-const Koa = require('koa');
-const app = new Koa();
+const Koa      = require('koa');
+const app      = new Koa();
+const request  = require('request');
 
 const PORT = process.env.PORT || 5000;
 
-// x-response-time
+let clientIP = '';
+let lat = '';
+let lon = '';
 
-app.use(async function (ctx, next) {
+// x-response-time
+app.use(async (ctx, next) => {
   const start = new Date();
   await next();
   const ms = new Date() - start;
@@ -13,8 +17,7 @@ app.use(async function (ctx, next) {
 });
 
 // logger
-
-app.use(async function (ctx, next) {
+app.use(async (ctx, next) => {
   const start = new Date();
   await next();
   const ms = new Date() - start;
@@ -22,11 +25,35 @@ app.use(async function (ctx, next) {
 });
 
 // response
+app.use(async (ctx, next) => {
+  await next();
+  ctx.body = `
+  Client IP: ${clientIP}
+  Client Coordinates: ${lat}, ${lon}`;
+});
 
-app.use(async ctx => {
-  const clientIP = ctx.request.ip;
+app.use(async (ctx, next) => {
+  // get clientIP from request
+  clientIP = ctx.request.ip;
   console.log(clientIP);
-  ctx.body = `Client IP: ${clientIP}`;
+
+  // get geolocation info from ip-api
+  request(`http://ip-api.com/json`, (error, response, body) => {
+    if (error) {
+      console.log('error:', error); // log the error if one occured
+    } else {
+      console.log('statusCode:', response && response.statusCode); // log the response status code if a response was received
+      console.log('body:', body); // log body
+      let geolocationData = JSON.parse(body);
+      console.log('lat,', geolocationData.lat, ' lon,', geolocationData.lon);
+      lat = geolocationData.lat;
+      lon = geolocationData.lon;
+    }
+  });
+  ctx.body = `
+  Client IP: ${clientIP}
+  Client Coordinates: ${lat}, ${lon}`;
+  await next();
 });
 
 app.listen(PORT, '0.0.0.0', () => {
