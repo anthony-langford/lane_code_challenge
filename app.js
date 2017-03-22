@@ -27,7 +27,7 @@ app.use(async (ctx, next) => {
 // response
 app.use(async (ctx, next) => {
   // get clientIP from request
-  console.log('ctx', ctx);
+  console.log('ctx.request.host.x-forwarded-for', ctx.request.host.x-forwarded-for);
   clientIP = ctx.request.ip;
   console.log('clientIP', clientIP);
   // get geolocation info from ip-api
