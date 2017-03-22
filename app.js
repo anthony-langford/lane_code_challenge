@@ -1,8 +1,10 @@
 const Koa      = require('koa');
 const app      = new Koa();
 const request  = require('request');
+const config = require('./config');
 
-const PORT = process.env.PORT || 5000;
+const PORT = config.PORT;
+const WEATHER_CONSUMER_KEY = config.WEATHER_CONSUMER_KEY;
 
 let clientIP = '';
 let lat = '';
@@ -43,6 +45,7 @@ app.use(async (ctx, next) => {
         console.log('lat,', geolocationData.lat, ' lon,', geolocationData.lon);
         lat = geolocationData.lat;
         lon = geolocationData.lon;
+        console.log(ctx.request);
         resolve();
       }
     });

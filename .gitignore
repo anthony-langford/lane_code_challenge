@@ -5,3 +5,6 @@
 logs
 *.log
 npm-debug.log*
+
+# config
+config.js
