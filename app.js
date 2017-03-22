@@ -21,19 +21,18 @@ app.use(async (ctx, next) => {
   const start = new Date();
   await next();
   const ms = new Date() - start;
-  console.log(`${ctx.method} ${ctx.url} - ${ms}`);
+  console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
 });
 
 // geolocation api
 app.use(async (ctx, next) => {
   // get clientIP from request
-  console.log('ctx.request.header[x-forwarded-for]', ctx.request.header['x-forwarded-for']);
   clientIP = ctx.request.header['x-forwarded-for'] || ctx.request.ip;     // ctx.request.ip is server - for local dev
   console.log('clientIP', clientIP);
   // get geolocation data from ip-api
   await new Promise((resolve, reject) => {
-    // request(`http://ip-api.com/json/`, (error, response, body) => {                       // for dev
-    request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {         // for production
+    request(`http://ip-api.com/json/`, (error, response, body) => {                       // for dev
+    // request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {         // for production
       if (error) {
         console.log('error:', error);       // log the error if one occured
       } else {
