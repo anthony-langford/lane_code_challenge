@@ -7,8 +7,6 @@ const PORT = config.PORT;
 const WEATHER_CONSUMER_KEY = config.WEATHER_CONSUMER_KEY;
 
 let clientIP = '';
-let lat = '';
-let lon = '';
 
 // x-response-time
 app.use(async (ctx, next) => {
@@ -26,26 +24,43 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - ${ms}`);
 });
 
-// response
+// geolocation api
 app.use(async (ctx, next) => {
   // get clientIP from request
   console.log('ctx.request.header[x-forwarded-for]', ctx.request.header['x-forwarded-for']);
-  clientIP = ctx.request.header['x-forwarded-for'] || ctx.request.ip; // ctx.request.ip is server - for local dev
+  clientIP = ctx.request.header['x-forwarded-for'] || ctx.request.ip;     // ctx.request.ip is server - for local dev
   console.log('clientIP', clientIP);
-  // get geolocation info from ip-api
+  // get geolocation data from ip-api
   await new Promise((resolve, reject) => {
     request(`http://ip-api.com/json/`, (error, response, body) => {                       // for dev
     // request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {         // for production
       if (error) {
-        console.log('error:', error); // log the error if one occured
+        console.log('error:', error);       // log the error if one occured
       } else {
-        console.log('statusCode:', response && response.statusCode); // log the response status code if a response was received
-        console.log('body:', body); // log body
+        console.log('statusCode:', response && response.statusCode);      // log the response status code if a response was received
+        console.log('body:', body);         // log body
         let geolocationData = JSON.parse(body);
         console.log('lat,', geolocationData.lat, ' lon,', geolocationData.lon);
-        lat = geolocationData.lat;
-        lon = geolocationData.lon;
-        console.log(ctx.request);
+        ctx.request.lat = geolocationData.lat;
+        ctx.request.lon = geolocationData.lon;
+        console.log(ctx.request.body);
+        resolve();
+      }
+    });
+  });
+  await next();
+});
+
+// weather api
+app.use(async (ctx, next) => {
+  // get weather data from openweathermap api
+  await new Promise((resolve, reject) => {
+    request(`api.openweathermap.org/data/2.5/weather?lat=${ctx.request.lat}&lon=${ctx.request.lon}`, (error, response, body) => {
+      if (error) {
+        console.log('error:', error);       // log the error if one occured
+      } else {
+        console.log('statusCode:', response && response.statusCode);      // log the response status code if a response was received
+        console.log('body:', body);         // log body
         resolve();
       }
     });
@@ -57,7 +72,7 @@ app.use(async (ctx, next) => {
   await next();
   ctx.body = `
     Client IP: ${clientIP}
-    Client Coordinates: ${lat}, ${lon}`;
+    Client Coordinates: ${ctx.request.lat}, ${ctx.request.lon}`;
 });
 
 app.listen(PORT, '0.0.0.0', () => {
