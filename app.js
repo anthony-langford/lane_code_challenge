@@ -26,34 +26,30 @@ app.use(async (ctx, next) => {
 
 // response
 app.use(async (ctx, next) => {
+  // get geolocation info from ip-api
+  await new Promise((resolve, reject) => {
+    request(`http://ip-api.com/json`, (error, response, body) => {
+      if (error) {
+        console.log('error:', error); // log the error if one occured
+      } else {
+        console.log('statusCode:', response && response.statusCode); // log the response status code if a response was received
+        console.log('body:', body); // log body
+        let geolocationData = JSON.parse(body);
+        console.log('lat,', geolocationData.lat, ' lon,', geolocationData.lon);
+        lat = geolocationData.lat;
+        lon = geolocationData.lon;
+        resolve();
+      }
+    });
+  });
   await next();
-  ctx.body = `
-  Client IP: ${clientIP}
-  Client Coordinates: ${lat}, ${lon}`;
 });
 
 app.use(async (ctx, next) => {
-  // get clientIP from request
-  clientIP = ctx.request.ip;
-  console.log(clientIP);
-
-  // get geolocation info from ip-api
-  request(`http://ip-api.com/json`, (error, response, body) => {
-    if (error) {
-      console.log('error:', error); // log the error if one occured
-    } else {
-      console.log('statusCode:', response && response.statusCode); // log the response status code if a response was received
-      console.log('body:', body); // log body
-      let geolocationData = JSON.parse(body);
-      console.log('lat,', geolocationData.lat, ' lon,', geolocationData.lon);
-      lat = geolocationData.lat;
-      lon = geolocationData.lon;
-    }
-  });
-  ctx.body = `
-  Client IP: ${clientIP}
-  Client Coordinates: ${lat}, ${lon}`;
   await next();
+  ctx.body = `
+    Client IP: ${clientIP}
+    Client Coordinates: ${lat}, ${lon}`;
 });
 
 app.listen(PORT, '0.0.0.0', () => {
