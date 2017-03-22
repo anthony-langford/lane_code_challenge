@@ -3,8 +3,8 @@ const app      = new Koa();
 const request  = require('request');
 const config = require('./config');
 
-const PORT = process.env.PORT || config.PORT;
-const WEATHER_CONSUMER_KEY = process.env.WEATHER_CONSUMER_KEY || config.WEATHER_CONSUMER_KEY;
+const PORT = config.PORT;
+const WEATHER_CONSUMER_KEY = config.WEATHER_CONSUMER_KEY;
 
 let clientIP = '';
 
