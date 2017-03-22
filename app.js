@@ -26,9 +26,12 @@ app.use(async (ctx, next) => {
 
 // response
 app.use(async (ctx, next) => {
+  // get clientIP from request
+  clientIP = ctx.request.ip;
+  console.log('clientIP', clientIP);
   // get geolocation info from ip-api
   await new Promise((resolve, reject) => {
-    request(`http://ip-api.com/json`, (error, response, body) => {
+    request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {
       if (error) {
         console.log('error:', error); // log the error if one occured
       } else {
@@ -47,9 +50,6 @@ app.use(async (ctx, next) => {
 
 app.use(async (ctx, next) => {
   await next();
-  // get clientIP from request
-  clientIP = ctx.request.ip;
-  console.log(clientIP);
   ctx.body = `
     Client IP: ${clientIP}
     Client Coordinates: ${lat}, ${lon}`;
