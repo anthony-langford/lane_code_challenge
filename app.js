@@ -27,12 +27,13 @@ app.use(async (ctx, next) => {
 // response
 app.use(async (ctx, next) => {
   // get clientIP from request
-  console.log('ctx.request.host.x-forwarded-for', ctx.request.header['x-forwarded-for']);
-  clientIP = ctx.request.header['x-forwarded-for'];
+  console.log('ctx.request.header[x-forwarded-for]', ctx.request.header['x-forwarded-for']);
+  clientIP = ctx.request.header['x-forwarded-for'] || ctx.request.ip; // ctx.request.ip is server - for local dev
   console.log('clientIP', clientIP);
   // get geolocation info from ip-api
   await new Promise((resolve, reject) => {
-    request(`http://ip-api.com/json/`, (error, response, body) => {
+    // request(`http://ip-api.com/json/`, (error, response, body) => { // for dev
+    request(`http://ip-api.com/json/${clientIP}`, (error, response, body) => {
       if (error) {
         console.log('error:', error); // log the error if one occured
       } else {
